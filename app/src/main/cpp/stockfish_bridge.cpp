@@ -2,7 +2,7 @@
 #include <android/log.h>
 #include <mutex>
 #include <string>
-#include <thread>
+#include <thread>\n#include <unistd.h>
 #include <chrono>
 #include <algorithm>
 extern "C" int stockfish_init();
