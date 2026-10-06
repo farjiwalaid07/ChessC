@@ -1,4 +1,4 @@
-name: Joyce Chess Android
+name: ChessCrazy Android
 on:
   push:
     branches: [main]
@@ -27,19 +27,19 @@ jobs:
           echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
           export PATH="/usr/local/lib/android/sdk/cmdline-tools/latest/bin:$PATH"
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "ndk;26.3.11579264"
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "ndk;28.2.13676358"
       - name: Native chess smoke tests
         run: |
           g++ -std=c++17 -O2 tests/chess_smoke.cpp app/src/main/cpp/chess.cpp -o chess_smoke
           ./chess_smoke
-      - name: Build debug
+      - name: Cloudflare Worker audit\n        working-directory: server\n        run: |\n          npm install\n          npx wrangler deploy --dry-run --outdir /tmp/chesscrazy-worker\n      - name: Build debug
         run: gradle --no-daemon --stacktrace assembleDebug
       - name: Build release
         run: gradle --no-daemon --stacktrace assembleRelease
-      - uses: actions/upload-artifact@v4
+      - name: 16 KB native alignment audit\n        run: |\n          mkdir -p /tmp/apk-audit\n          unzip -p app/build/outputs/apk/release/ChessCrazy-release.apk lib/arm64-v8a/libjoyce_chess.so > /tmp/apk-audit/libjoyce_chess.so\n          "$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" -lW /tmp/apk-audit/libjoyce_chess.so | tee /tmp/apk-audit/readelf.txt\n          ! grep -E "LOAD.*0x1000" /tmp/apk-audit/readelf.txt\n      - uses: actions/upload-artifact@v4
         with:
-          name: Joyce-Chess-APK
+          name: ChessCrazy-APK
           path: |
-            app/build/outputs/apk/debug/Joyce-Chess-debug.apk
-            app/build/outputs/apk/release/Joyce-Chess-release.apk
+            app/build/outputs/apk/debug/ChessCrazy-debug.apk
+            app/build/outputs/apk/release/ChessCrazy-release.apk
           retention-days: 14
