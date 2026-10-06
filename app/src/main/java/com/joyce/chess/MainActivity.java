@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
     startClock();
   }
 
-  Button btn(String text){
+  void toast(String s){ Toast.makeText(this,s,Toast.LENGTH_SHORT).show(); }\n\n  Button btn(String text){
     Button b=new Button(this); b.setText(text); b.setTextSize(11); b.setAllCaps(false);
     b.setTextColor(Color.WHITE); b.setBackgroundColor(Color.rgb(32,36,48)); return b;
   }
@@ -294,7 +294,7 @@ public class MainActivity extends Activity {
       JSONArray h=new JSONArray(prefs.getString("history","[]"));JSONObject g=new JSONObject();
       g.put("date",System.currentTimeMillis());g.put("result",result);g.put("reason",reason);g.put("pgn",nativePgn());g.put("moves",moveSans.size());g.put("opponent",online?opponent:"Stockfish");
       JSONArray n=new JSONArray();n.put(g);for(int i=0;i<Math.min(49,h.length());i++)n.put(h.get(i));prefs.edit().putString("history",n.toString()).apply();
-      int elo=prefs.getInt("elo",1200),wins=prefs.getInt("wins",0),loss=prefs.getInt("losses",0),draws=prefs.getInt("draws",0);
+      int elo=prefs.getInt("elo",1200),wins=prefs.getInt("wins",0),losses=prefs.getInt("losses",0),draws=prefs.getInt("draws",0);
       if(("whiteWin".equals(result)&&playerSide==0)||("blackWin".equals(result)&&playerSide==1)||(!online&&"whiteWin".equals(result))) {elo+=Math.max(5,32);wins++;} else if("draw".equals(result)){draws++;} else {elo-=Math.min(32,Math.max(5,32));losses++;}
       prefs.edit().putInt("elo",Math.max(100,elo)).putInt("wins",wins).putInt("losses",losses).putInt("draws",draws).apply();
     }catch(Exception ignored){}
