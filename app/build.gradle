@@ -7,3 +7,4 @@ android {
  buildTypes { release { minifyEnabled false }; debug { debuggable true } }
  applicationVariants.all { variant -> variant.outputs.all { output -> outputFileName="Joyce-Chess-${variant.name}.apk" } }
 }
+dependencies { implementation 'com.squareup.okhttp3:okhttp:4.12.0' }
