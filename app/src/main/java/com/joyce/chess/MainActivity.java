@@ -61,7 +61,9 @@ public class MainActivity extends Activity {
     startClock();
   }
 
-  void toast(String s){ Toast.makeText(this,s,Toast.LENGTH_SHORT).show(); }\n\n  Button btn(String text){
+  void toast(String s){ Toast.makeText(this,s,Toast.LENGTH_SHORT).show(); }
+
+  Button btn(String text){
     Button b=new Button(this); b.setText(text); b.setTextSize(11); b.setAllCaps(false);
     b.setTextColor(Color.WHITE); b.setBackgroundColor(Color.rgb(32,36,48)); return b;
   }
