@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(joyce_chess)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_library(joyce_chess SHARED chess.cpp native.cpp)
+find_library(log-lib log)
+target_link_libraries(joyce_chess ${log-lib} android)
+target_compile_options(joyce_chess PRIVATE -O3 -ffast-math -fvisibility=hidden)
