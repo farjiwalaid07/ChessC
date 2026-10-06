@@ -311,7 +311,7 @@ public class MainActivity extends Activity {
   void profileDialog(){
     LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);l.setPadding(18,0,18,0);
     EditText n=new EditText(this);n.setHint("Username");n.setText(playerName);l.addView(n);
-    int elo=prefs.getInt("elo",1200),wins=prefs.getInt("wins",0),loss=prefs.getInt("losses",0),draws=prefs.getInt("draws",0),level=prefs.getInt("level",1),xp=prefs.getInt("xp",0);
+    int elo=prefs.getInt("elo",1200),wins=prefs.getInt("wins",0),losses=prefs.getInt("losses",0),draws=prefs.getInt("draws",0),level=prefs.getInt("level",1),xp=prefs.getInt("xp",0);
     TextView stats=new TextView(this);stats.setTextColor(Color.WHITE);stats.setPadding(4,12,4,4);stats.setText("ELO "+elo+"\nLevel "+level+" • "+xp+" XP\nW "+wins+"  L "+losses+"  D "+draws);l.addView(stats);
     new AlertDialog.Builder(this).setTitle("PROFILE").setView(l).setPositiveButton("Save",(d,w)->{playerName=n.getText().toString().trim();if(playerName.isEmpty())playerName="Player";prefs.edit().putString("name",playerName).apply();refresh();}).setNegativeButton("Close",null).show();
   }
