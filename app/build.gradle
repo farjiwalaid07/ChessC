@@ -1,0 +1,9 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'com.joyce.chess'
+ compileSdk 35
+ defaultConfig { applicationId 'com.joyce.chess'; minSdk 23; targetSdk 35; versionCode 1; versionName '1.0.0'; ndkVersion '26.3.11579264' }
+ externalNativeBuild { cmake { path file('src/main/cpp/CMakeLists.txt') } }
+ buildTypes { release { minifyEnabled false }; debug { debuggable true } }
+ applicationVariants.all { variant -> variant.outputs.all { output -> outputFileName="Joyce-Chess-${variant.name}.apk" } }
+}
