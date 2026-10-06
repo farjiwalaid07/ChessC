@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
   static final String START="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   final Handler handler=new Handler(Looper.getMainLooper());
   final OkHttpClient client=new OkHttpClient.Builder().retryOnConnectionFailure(true).build();
-  final SharedPreferences prefs;
+  SharedPreferences prefs;
   BoardView board;
   TextView title,sub;
   WebSocket ws;
@@ -48,11 +48,11 @@ public class MainActivity extends Activity {
   ArrayList<String> moveSans=new ArrayList<>();
   Runnable clockTask;
 
-  MainActivity(){ super(); prefs=getSharedPreferences("chesscrazy",MODE_PRIVATE); }
+
 
   @Override public void onCreate(Bundle b){
     super.onCreate(b);
-    getWindow().setStatusBarColor(Color.rgb(8,10,16));
+    prefs=getSharedPreferences("chesscrazy",MODE_PRIVATE);\n    getWindow().setStatusBarColor(Color.rgb(8,10,16));
     getWindow().setNavigationBarColor(Color.rgb(8,10,16));
     nativeReset();
     playerName=prefs.getString("name","Player");
@@ -104,7 +104,7 @@ public class MainActivity extends Activity {
     title.setText(APP+(online?"  •  "+roomId:""));
     sub.setText((online?(playerSide==0?"You are WHITE":"You are BLACK"):"Local game")+"  •  "+state+
       (nativeLastSan().isEmpty()?"":"  •  "+nativeLastSan()));
-    ((TextView) ((ViewGroup)((ViewGroup)findViewById(android.R.id.content)).getChildAt(0)).getChildAt(2)).setText("White  "+fmt(whiteMs));
+    try{getClock(true).setText("White  "+fmt(whiteMs));getClock(false).setText("Black  "+fmt(blackMs));}catch(Exception ignored){}
   }
 
   TextView getClock(boolean white){
@@ -142,13 +142,13 @@ public class MainActivity extends Activity {
 
   void newGameDialog(){new AlertDialog.Builder(this).setTitle("New Game").setItems(new String[]{"Stockfish","Local 2 Player","Online"},(d,w)->{if(w==0)startAiDialog();else if(w==1)startLocal();else onlineDialog();}).show();}
 
-  void startLocal(){disconnect();online=false;playerSide=-1;remoteResult=null;spectator=false;resetGame(300,0);toast("Local 2 Player ready");}
+  void startLocal(){disconnect();online=false;playerSide=-1;remoteResult=null;spectator=false;prefs.edit().putBoolean("ai",false).apply();resetGame(300,0);toast("Local 2 Player ready");}
 
   void startAiDialog(){
     String[] ds={"Beginner • depth 8","Club • depth 12","Strong • depth 16","Master • depth 20"};
     new AlertDialog.Builder(this).setTitle("Play vs Local Stockfish").setItems(ds,(d,w)->{
       prefs.edit().putInt("aiDepth",new int[]{8,12,16,20}[w]).apply();
-      disconnect();online=false;playerSide=0;remoteResult=null;spectator=false;resetGame(300,0);
+      disconnect();online=false;playerSide=0;remoteResult=null;spectator=false;prefs.edit().putBoolean("ai",true).apply();resetGame(300,0);
       if(nativeTurn()!=0) aiMove(); else toast("Stockfish ready • your move");
     }).show();
   }
@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
 
   void finishLocal(String result,String reason){
     if(gameFinished)return;gameFinished=true;clockRunning=false;remoteResult=result;saveMatch(result,reason);
-    if(online)sendSimple(reason.equals("timeout")?"timeout":"resign");
+    if(online && ("timeout".equals(reason)||"resignation".equals(reason)))sendSimple("resign");
     refresh();
     new AlertDialog.Builder(this).setTitle(result.equals("draw")?"DRAW":result.equals("whiteWin")?"WHITE WINS":"BLACK WINS")
       .setMessage(reason.toUpperCase(Locale.US)+"\n\n"+nativePgn()).setPositiveButton("Rematch", (d,w)->{if(online)sendSimple("rematchOffer");else resetGame(baseSeconds,increment);})
