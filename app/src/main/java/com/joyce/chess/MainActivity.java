@@ -52,7 +52,8 @@ public class MainActivity extends Activity {
 
   @Override public void onCreate(Bundle b){
     super.onCreate(b);
-    prefs=getSharedPreferences("chesscrazy",MODE_PRIVATE);\n    getWindow().setStatusBarColor(Color.rgb(8,10,16));
+    prefs=getSharedPreferences("chesscrazy",MODE_PRIVATE);
+    getWindow().setStatusBarColor(Color.rgb(8,10,16));
     getWindow().setNavigationBarColor(Color.rgb(8,10,16));
     nativeReset();
     playerName=prefs.getString("name","Player");
