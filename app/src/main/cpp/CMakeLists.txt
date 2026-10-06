@@ -17,6 +17,9 @@ if(NOT EXISTS ${SF_DIR}/ios/Stockfish/src/main.cpp)
   endif()
 endif()
 
+file(DOWNLOAD https://tests.stockfishchess.org/api/nn/nn-1111cefa1111.nnue ${CMAKE_BINARY_DIR}/nn-1111cefa1111.nnue SHOW_PROGRESS)
+file(DOWNLOAD https://tests.stockfishchess.org/api/nn/nn-37f18f62d772.nnue ${CMAKE_BINARY_DIR}/nn-37f18f62d772.nnue SHOW_PROGRESS)
+
 file(GLOB_RECURSE STOCKFISH_CPP "${SF_DIR}/ios/Stockfish/src/*.cpp")
 add_library(joyce_chess SHARED chess.cpp native.cpp stockfish_bridge.cpp ${SF_DIR}/ios/FlutterStockfish/ffi.cpp ${STOCKFISH_CPP})
 target_include_directories(joyce_chess PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${SF_DIR}/ios/FlutterStockfish ${SF_DIR}/ios/Stockfish/src)
