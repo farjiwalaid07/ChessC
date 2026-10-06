@@ -32,11 +32,22 @@ jobs:
         run: |
           g++ -std=c++17 -O2 tests/chess_smoke.cpp app/src/main/cpp/chess.cpp -o chess_smoke
           ./chess_smoke
-      - name: Cloudflare Worker audit\n        working-directory: server\n        run: |\n          npm install\n          npx wrangler deploy --dry-run --outdir /tmp/chesscrazy-worker\n      - name: Build debug
+      - name: Cloudflare Worker audit
+        working-directory: server
+        run: |
+          npm install
+          npx wrangler deploy --dry-run --outdir /tmp/chesscrazy-worker\n      - name: Build debug
         run: gradle --no-daemon --stacktrace assembleDebug
       - name: Build release
         run: gradle --no-daemon --stacktrace assembleRelease
-      - name: 16 KB native alignment audit\n        run: |\n          mkdir -p /tmp/apk-audit\n          unzip -p app/build/outputs/apk/release/ChessCrazy-release.apk lib/arm64-v8a/libjoyce_chess.so > /tmp/apk-audit/libjoyce_chess.so\n          "$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" -lW /tmp/apk-audit/libjoyce_chess.so | tee /tmp/apk-audit/readelf.txt\n          ! grep -E "LOAD.*0x1000" /tmp/apk-audit/readelf.txt\n      - uses: actions/upload-artifact@v4
+      - name: 16 KB native alignment audit
+        env:
+          ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/28.2.13676358
+        run: |
+          mkdir -p /tmp/apk-audit
+          unzip -p app/build/outputs/apk/release/ChessCrazy-release.apk lib/arm64-v8a/libjoyce_chess.so > /tmp/apk-audit/libjoyce_chess.so
+          "$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf" -lW /tmp/apk-audit/libjoyce_chess.so | tee /tmp/apk-audit/readelf.txt
+          ! grep -E "LOAD.*0x1000" /tmp/apk-audit/readelf.txt\n      - uses: actions/upload-artifact@v4
         with:
           name: ChessCrazy-APK
           path: |
